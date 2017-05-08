@@ -19,6 +19,9 @@
 #define PROMPT_HPP
 
 #include <string>
+#include <vector>
+
+#include "rule.hpp"
 
 class Prompt
 {
@@ -26,7 +29,15 @@ class Prompt
         void run();
 
     private:
+        void loadRules();
+        void loadRuleNotUnderstood();
+        void loadRuleExit();
+
         std::string read();
+
+        std::vector<Rule> m_rules;
+        Rule m_notUnderstood;
+        Rule m_exit;
 };
 
 #endif // PROMPT_HPP

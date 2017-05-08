@@ -1,0 +1,1 @@
+/usr/bin/clang++    -std=c++14 -Wall -Wextra -g   CMakeFiles/POCChatbot.dir/src/main.cpp.o CMakeFiles/POCChatbot.dir/src/prompt.cpp.o CMakeFiles/POCChatbot.dir/src/rule.cpp.o  -o bin/POCChatbot -rdynamic 

@@ -9,6 +9,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Wextra -g")
 include_directories("include")
 
 file(GLOB_RECURSE source_files "src/*.cpp")
-file(GLOB_RECURSE header_files "include/*.hpp")
+file(GLOB_RECURSE header_files "include/*.hpp" "include/ext/*.hpp" "include/ext/*.hpp")
 
 add_executable(${PROJECT_NAME} ${header_files} ${source_files})

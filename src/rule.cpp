@@ -19,15 +19,31 @@
 
 #include <algorithm>
 
+#include "parsing.hpp"
+
 bool Rule::matches(const std::string &input) const
 {
-    return std::all_of(m_checkPatterns.cbegin(), m_checkPatterns.cend(), [input](const std::regex& regex)
+    return !checkPatterns.empty() && std::all_of(checkPatterns.cbegin(), checkPatterns.cend(), [input](const std::regex& regex)
     {
         return std::regex_match(input, regex);
     });
 }
 
-std::string Rule::answer() const
+std::string Rule::answer(const std::string& input) const
 {
+    (void)input; // on utilise pas encore, c'est juste un POC la ^^'
+    return parser::parsePattern(returnPattern);
+}
 
+Rule ruleFromJson(const nlohmann::json &json)
+{
+    Rule rule;
+    for (const std::string& pattern : json["inputPatterns"])
+    {
+        rule.checkPatterns.emplace_back(pattern);
+    }
+
+    rule.returnPattern = json["answer"];
+
+    return rule;
 }

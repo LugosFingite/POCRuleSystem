@@ -22,15 +22,19 @@
 #include <string>
 #include <regex>
 
+#include "ext/json.hpp"
+
 class Rule
 {
     public:
-        bool matches(const std::string& input);
-        std::string answer();
+        bool matches(const std::string& input) const;
+        std::string answer(const std::string& input) const;
 
-    private:
-        std::vector<std::regex> m_checkPatterns;
+    public:
+        std::vector<std::regex> checkPatterns;
         std::string returnPattern;
 };
+
+Rule ruleFromJson(const nlohmann::json& json);
 
 #endif // RULE_HPP

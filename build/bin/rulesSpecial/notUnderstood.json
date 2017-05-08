@@ -1,0 +1,4 @@
+{
+	"inputPatterns" : [".*"],
+	"answer" : "{Désolé|Excusez-moi}, je n'ai pas compris.\nSi vous voulez quitter, entrez \"quit\""
+}

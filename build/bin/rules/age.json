@@ -1,0 +1,4 @@
+{
+	"inputPatterns" : [".*quel.*", ".*age.*", ".*as\\-tu.*|.*as tu.*|.*ton.*", ".*?"],
+	"answer" : "J'ai 3 ans."
+}
