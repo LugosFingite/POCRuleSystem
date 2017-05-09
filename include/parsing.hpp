@@ -52,10 +52,10 @@ inline std::string parsePattern(const std::string& in)
     std::stringstream ss(in);
     std::string word;
 
-    while (std::getline(ss, word, '{'))
+    while (std::getline(ss, word, '('))
     {
         result += word;
-        if (std::getline(ss, word, '}'))
+        if (std::getline(ss, word, ')'))
         {
             auto choices = detail::parseChoice(word);
             result += *select_randomly(choices.begin(), choices.end());

@@ -23,10 +23,7 @@
 
 bool Rule::matches(const std::string &input) const
 {
-    return !checkPatterns.empty() && std::all_of(checkPatterns.cbegin(), checkPatterns.cend(), [input](const std::regex& regex)
-    {
-        return std::regex_match(input, regex);
-    });
+    return std::regex_match(input, checkPattern);
 }
 
 std::string Rule::answer(const std::string& input) const
@@ -38,11 +35,9 @@ std::string Rule::answer(const std::string& input) const
 Rule ruleFromJson(const nlohmann::json &json)
 {
     Rule rule;
-    for (const std::string& pattern : json["inputPatterns"])
-    {
-        rule.checkPatterns.emplace_back(pattern);
-    }
 
+    std::string pattern = json["input"];
+    rule.checkPattern = std::regex(pattern, std::regex::icase);
     rule.returnPattern = json["answer"];
 
     return rule;

@@ -31,7 +31,7 @@ class Rule
         std::string answer(const std::string& input) const;
 
     public:
-        std::vector<std::regex> checkPatterns;
+        std::regex checkPattern;
         std::string returnPattern;
 };
 
