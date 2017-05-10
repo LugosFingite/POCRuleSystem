@@ -1,4 +1,5 @@
 {
 	"input" : ".*(J'ai| Mon age est) $age ans\\..*",
-	"answer" : "Tu as $age ans !"
+	"script" : "age = to_string(to_int(age) + 10)",
+	"answer" : "Dans 10 ans tu as $age ans !"
 }

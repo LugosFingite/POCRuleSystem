@@ -21,13 +21,18 @@
 #include <fstream>
 
 #include "ext/tinydir.h"
+#include "ext/chaiscript/chaiscript_stdlib.hpp"
 
 #include "parsing.hpp"
 
-void Prompt::run()
+Prompt::Prompt()
+    : m_scriptingEngine(chaiscript::Std_Lib::library())
 {
     loadRules();
+}
 
+void Prompt::run()
+{
     while (true)
     {
         auto input = read();
@@ -42,14 +47,14 @@ void Prompt::run()
         {
             if (rule.matches(input))
             {
-                std::cout << rule.answer(input) << "\n";
+                std::cout << rule.answer(input, m_scriptingEngine) << "\n";
                 matched = true;
                 break;
             }
         }
         if (!matched)
         {
-            std::cout << m_notUnderstood.answer(input) << "\n";
+            std::cout << m_notUnderstood.answer(input, m_scriptingEngine) << "\n";
         }
     }
 }

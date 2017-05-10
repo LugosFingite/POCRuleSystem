@@ -26,13 +26,19 @@
 
 #include "ext/json.hpp"
 
+namespace chaiscript
+{
+class ChaiScript;
+}
+
 struct Rule
 {
         bool matches(const std::string& input) const;
-        std::string answer(const std::string& input);
+        std::string answer(const std::string& input, chaiscript::ChaiScript& scriptingEngine);
 
         boost::xpressive::sregex checkPattern;
         std::string returnPattern;
+        std::string analyzeScript;
         std::map<std::string, std::string> variables;
 };
 

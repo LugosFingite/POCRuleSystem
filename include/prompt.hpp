@@ -21,10 +21,15 @@
 #include <string>
 #include <vector>
 
+#include "ext/chaiscript/chaiscript.hpp"
+
 #include "rule.hpp"
 
 class Prompt
 {
+    public:
+        Prompt();
+
     public:
         void run();
 
@@ -38,6 +43,8 @@ class Prompt
         std::vector<Rule> m_rules;
         Rule m_notUnderstood;
         Rule m_exit;
+
+        chaiscript::ChaiScript m_scriptingEngine;
 };
 
 #endif // PROMPT_HPP

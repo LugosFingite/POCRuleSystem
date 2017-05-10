@@ -19,6 +19,8 @@
 
 #include <algorithm>
 
+#include "ext/chaiscript/chaiscript.hpp"
+
 #include "parsing.hpp"
 
 using namespace boost::xpressive;
@@ -28,17 +30,24 @@ bool Rule::matches(const std::string &input) const
     return regex_match(input, checkPattern);
 }
 
-std::string Rule::answer(const std::string& input)
+std::string Rule::answer(const std::string& input, chaiscript::ChaiScript &scriptingEngine)
 {
+    auto oldState = scriptingEngine.get_state();
     smatch what;
     regex_match(input, what, checkPattern);
 
     for (const auto& pair : variables)
     {
         variables[pair.first] = what[pair.first].str();
+        scriptingEngine.add(chaiscript::var(&variables[pair.first]), pair.first);
     }
 
-    (void)input; // on utilise pas encore, c'est juste un POC la ^^'
+    scriptingEngine.add(chaiscript::fun([input]{return input;}), "input");
+
+    scriptingEngine.eval(analyzeScript);
+
+    scriptingEngine.set_state(oldState);
+
     return parser::parsePattern(returnPattern, variables);
 }
 
@@ -61,6 +70,11 @@ Rule ruleFromJson(const nlohmann::json &json)
 
     rule.checkPattern = sregex::compile(pattern, regex_constants::icase);
     rule.returnPattern = json["answer"];
+
+    if (json.find("script") != json.cend())
+    {
+        rule.analyzeScript = json["script"];
+    }
 
     return rule;
 }
