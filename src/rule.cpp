@@ -19,26 +19,68 @@
 
 #include <algorithm>
 
+#include "ext/chaiscript/chaiscript.hpp"
+
 #include "parsing.hpp"
+
+using namespace boost::xpressive;
 
 bool Rule::matches(const std::string &input) const
 {
-    return std::regex_match(input, checkPattern);
+    return regex_match(input, checkPattern);
 }
 
-std::string Rule::answer(const std::string& input) const
+std::string Rule::answer(const std::string& input, chaiscript::ChaiScript &scriptingEngine)
 {
-    (void)input; // on utilise pas encore, c'est juste un POC la ^^'
-    return parser::parsePattern(returnPattern);
+    auto oldState = scriptingEngine.get_state();
+    smatch what;
+    regex_match(input, what, checkPattern);
+
+    for (const auto& pair : variables)
+    {
+        variables[pair.first] = what[pair.first].str();
+        scriptingEngine.add(chaiscript::var(&variables[pair.first]), pair.first);
+    }
+
+    scriptingEngine.add(chaiscript::fun([input]{return input;}), "input");
+
+    scriptingEngine.eval(analyzeScript);
+
+    scriptingEngine.set_state(oldState);
+
+    return parser::parsePattern(returnPattern, variables);
 }
 
-Rule ruleFromJson(const nlohmann::json &json)
+std::vector<Rule> rulesFromJson(const nlohmann::json &root)
 {
-    Rule rule;
+    std::vector<Rule> rules;
+    for (const auto& json : root["rules"])
+    {
+        Rule rule;
+        std::string pattern = json["input"];
+        sregex match = sregex::compile(R"(\$[[:alpha:]]+)");
 
-    std::string pattern = json["input"];
-    rule.checkPattern = std::regex(pattern, std::regex::icase);
-    rule.returnPattern = json["answer"];
+        smatch what;
+        regex_search(pattern, what, match);
 
-    return rule;
+        for (const auto& val : what)
+        {
+            rule.variables[val.str().substr(1, val.length()-1)] = ""; // enlever le '$' au début
+        }
+
+        pattern = regex_replace(pattern, match, R"((?P<$&>[[:alnum:]]+))");
+        pattern.erase(std::remove(pattern.begin(), pattern.end(), '$'), pattern.end());
+
+        rule.checkPattern = sregex::compile(pattern, regex_constants::icase);
+        rule.returnPattern = json["answer"];
+
+        if (json.find("script") != json.cend())
+        {
+            rule.analyzeScript = json["script"];
+        }
+
+        rules.emplace_back(rule);
+    }
+
+    return rules;
 }

@@ -23,14 +23,28 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <map>
+
+#include <stdexcept>
 
 #include "util.hpp"
 
 namespace parser
 {
 
+struct parse_error : std::runtime_error
+{
+        using std::runtime_error::runtime_error;
+};
+
+[[noreturn]] inline void throw_parse_error(const std::string& why)
+{
+    throw parse_error(why);
+}
+
 namespace detail
 {
+
 inline std::vector<std::string> parseChoice(const std::string& pattern)
 {
     std::vector<std::string> choices;
@@ -43,9 +57,36 @@ inline std::vector<std::string> parseChoice(const std::string& pattern)
 
     return choices;
 }
+
+inline std::string replaceVariables(const std::string& in, const std::map<std::string, std::string>& variables)
+{
+    std::string result;
+
+    std::stringstream ss(in);
+    std::string word;
+    while (ss >> word)
+    {
+        if (word.front() == '$') // c'est une variable à remplacer
+        {
+            word = word.substr(1, word.length()-1);
+            if (variables.find(word) == variables.cend())
+            {
+                throw_parse_error("Undefined variable $" + word + " in answer pattern !");
+            }
+            else
+            {
+                word = variables.at(word);
+            }
+        }
+        result += word + " ";
+    }
+
+    return result;
 }
 
-inline std::string parsePattern(const std::string& in)
+}
+
+inline std::string parsePattern(const std::string& in, const std::map<std::string, std::string>& variables)
 {
     std::string result;
 
@@ -62,7 +103,7 @@ inline std::string parsePattern(const std::string& in)
         }
     }
 
-    return result;
+    return detail::replaceVariables(result, variables);
 }
 
 }

@@ -20,21 +20,28 @@
 
 #include <vector>
 #include <string>
-#include <regex>
+#include <map>
+
+#include <boost/xpressive/xpressive.hpp>
 
 #include "ext/json.hpp"
 
-class Rule
+namespace chaiscript
 {
-    public:
-        bool matches(const std::string& input) const;
-        std::string answer(const std::string& input) const;
+class ChaiScript;
+}
 
-    public:
-        std::regex checkPattern;
+struct Rule
+{
+        bool matches(const std::string& input) const;
+        std::string answer(const std::string& input, chaiscript::ChaiScript& scriptingEngine);
+
+        boost::xpressive::sregex checkPattern;
         std::string returnPattern;
+        std::string analyzeScript;
+        std::map<std::string, std::string> variables;
 };
 
-Rule ruleFromJson(const nlohmann::json& json);
+std::vector<Rule> rulesFromJson(const nlohmann::json& root);
 
 #endif // RULE_HPP

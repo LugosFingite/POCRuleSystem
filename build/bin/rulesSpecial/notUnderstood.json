@@ -1,4 +1,7 @@
 {
-	"input" : ".*",
-	"answer" : "(Désolé|Excusez-moi), je n'ai pas compris.\nSi vous voulez quitter, entrez \"quit\""
+	"rules" : [
+{
+    "input" : ".*",
+    "answer" : "(Désolé|Excusez-moi), je n'ai pas compris (ce que vous venez de dire|votre phrase).\nSi vous (voulez|souhaiter) (quitter|sortir|partir), (entrez|taper) \"(quitter|quit|exit|partir|sortie)\""
+}]
 }
