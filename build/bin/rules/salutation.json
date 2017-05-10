@@ -1,0 +1,12 @@
+{
+	"rules" : [
+	{
+		"input" : "(Salut|Salutation|Coucou|Bonjour|Bienvenue)",
+		"answer" : "(Salut|Salutation|Coucou|Bonjour|Bienvenue)"
+	},
+	{
+		"input" : "Comment (vas tu|te sens tu) \\?",
+		"answer" : "(Bien|Je me sens bien|Je vais bien)."
+	}
+]
+}
