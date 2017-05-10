@@ -75,7 +75,10 @@ void Prompt::loadRules()
 
             nlohmann::json json;
             ifstream >> json;
-            m_rules.emplace_back(ruleFromJson(json));
+            for (const auto& rule : rulesFromJson(json))
+            {
+                m_rules.emplace_back(rule);
+            }
         }
 
         tinydir_next(&dir);
@@ -91,7 +94,7 @@ void Prompt::loadRuleNotUnderstood()
 
     nlohmann::json json;
     ifstream >> json;
-    m_notUnderstood = ruleFromJson(json);
+    m_notUnderstood = rulesFromJson(json).front();
 }
 
 void Prompt::loadRuleExit()
@@ -100,7 +103,7 @@ void Prompt::loadRuleExit()
 
     nlohmann::json json;
     ifstream >> json;
-    m_exit = ruleFromJson(json);
+    m_exit = rulesFromJson(json).front();
 }
 
 std::string Prompt::read()

@@ -51,30 +51,36 @@ std::string Rule::answer(const std::string& input, chaiscript::ChaiScript &scrip
     return parser::parsePattern(returnPattern, variables);
 }
 
-Rule ruleFromJson(const nlohmann::json &json)
+std::vector<Rule> rulesFromJson(const nlohmann::json &root)
 {
-    Rule rule;
-    std::string pattern = json["input"];
-    sregex match = sregex::compile(R"(\$[[:alpha:]]+)");
-
-    smatch what;
-    regex_search(pattern, what, match);
-
-    for (const auto& val : what)
+    std::vector<Rule> rules;
+    for (const auto& json : root["rules"])
     {
-        rule.variables[val.str().substr(1, val.length()-1)] = ""; // enlever le '$' au début
+        Rule rule;
+        std::string pattern = json["input"];
+        sregex match = sregex::compile(R"(\$[[:alpha:]]+)");
+
+        smatch what;
+        regex_search(pattern, what, match);
+
+        for (const auto& val : what)
+        {
+            rule.variables[val.str().substr(1, val.length()-1)] = ""; // enlever le '$' au début
+        }
+
+        pattern = regex_replace(pattern, match, R"((?P<$&>[[:alnum:]]+))");
+        pattern.erase(std::remove(pattern.begin(), pattern.end(), '$'), pattern.end());
+
+        rule.checkPattern = sregex::compile(pattern, regex_constants::icase);
+        rule.returnPattern = json["answer"];
+
+        if (json.find("script") != json.cend())
+        {
+            rule.analyzeScript = json["script"];
+        }
+
+        rules.emplace_back(rule);
     }
 
-    pattern = regex_replace(pattern, match, R"((?P<$&>[[:alnum:]]+))");
-    pattern.erase(std::remove(pattern.begin(), pattern.end(), '$'), pattern.end());
-
-    rule.checkPattern = sregex::compile(pattern, regex_constants::icase);
-    rule.returnPattern = json["answer"];
-
-    if (json.find("script") != json.cend())
-    {
-        rule.analyzeScript = json["script"];
-    }
-
-    return rule;
+    return rules;
 }

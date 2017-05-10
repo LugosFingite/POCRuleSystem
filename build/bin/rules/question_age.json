@@ -1,4 +1,0 @@
-{
-	"input" : "Quel (est ton age|age as tu) \\?.*",
-	"answer" : "J'ai 3 ans."
-}

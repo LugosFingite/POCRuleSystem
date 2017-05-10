@@ -42,6 +42,6 @@ struct Rule
         std::map<std::string, std::string> variables;
 };
 
-Rule ruleFromJson(const nlohmann::json& json);
+std::vector<Rule> rulesFromJson(const nlohmann::json& root);
 
 #endif // RULE_HPP
