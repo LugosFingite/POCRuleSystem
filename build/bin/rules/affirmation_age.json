@@ -1,0 +1,4 @@
+{
+	"input" : ".*(J'ai| Mon age est) $age ans\\..*",
+	"answer" : "Tu as $age ans !"
+}
