@@ -1,0 +1,8 @@
+{
+	"rules" : [
+	{
+		"input" : "help",
+		"answer" : "exit -> quitte le programme."
+	}
+]
+}
