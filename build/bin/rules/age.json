@@ -1,0 +1,14 @@
+{
+	"rules" : [
+{
+	"input" : ".*(J'ai| Mon age est) $age ans\\..*",
+	"script" : "age = to_string(to_int(age) + 10)",
+	"answer" : "Dans 10 ans tu as $age ans !"
+},
+
+{
+	"input" : "Quel (est ton age|age as tu) \\?.*",
+	"answer" : "J'ai 3 ans."
+}]
+
+}
