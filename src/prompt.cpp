@@ -38,7 +38,7 @@ void Prompt::run()
         }
 
         bool matched { false };
-        for (const auto& rule : m_rules)
+        for (auto& rule : m_rules)
         {
             if (rule.matches(input))
             {

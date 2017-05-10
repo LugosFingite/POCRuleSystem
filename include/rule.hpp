@@ -20,19 +20,20 @@
 
 #include <vector>
 #include <string>
-#include <regex>
+#include <map>
+
+#include <boost/xpressive/xpressive.hpp>
 
 #include "ext/json.hpp"
 
-class Rule
+struct Rule
 {
-    public:
         bool matches(const std::string& input) const;
-        std::string answer(const std::string& input) const;
+        std::string answer(const std::string& input);
 
-    public:
-        std::regex checkPattern;
+        boost::xpressive::sregex checkPattern;
         std::string returnPattern;
+        std::map<std::string, std::string> variables;
 };
 
 Rule ruleFromJson(const nlohmann::json& json);
