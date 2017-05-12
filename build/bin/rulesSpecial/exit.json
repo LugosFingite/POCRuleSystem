@@ -1,7 +1,7 @@
 {
 	"rules" : [
 {
-	"input" : "quitter|quit|exit|exit\\(\\)|quit\\(\\)|partir|sortie",
+	"input" : "quitter|sortir|quit|exit|exit\\(\\)|quit\\(\\)|partir|sortie",
 	"answer" : "(Goodbye|Au revoir|Salut|Hi) !"
 }]
 }
