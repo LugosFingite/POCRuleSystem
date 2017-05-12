@@ -3,7 +3,8 @@
 	{
 		"input" : "(Mon nom est|Je m'appelle|Je suis) $nom.",
 		"script" : "nom = nom",
-		"answer" : "Tu t'appelle $nom"
+		"answer" : "Tu t'appelle $nom",
+		"answer" : "Quel âge as-tu?"
 	}
 ]
 }
