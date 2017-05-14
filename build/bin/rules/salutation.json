@@ -6,7 +6,11 @@
 	},
 	{
 		"input" : "Comment (vas tu|te sens tu) \\?",
-		"answer" : "(Bien|Je me sens bien|Je vais bien)."
+		"answer" : "(Bien|Je me sens bien|Je vais bien) et toi ?"
+	},
+	{	
+		"input" : "(Bien|Je me sens bien|Je vais bien)",
+	 	"answer" : "(Super|Cool)"
 	}
 ]
 }
