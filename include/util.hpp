@@ -20,6 +20,9 @@
 
 #include <random>
 #include <iterator>
+#include <vector>
+#include <string>
+#include <sstream>
 
 template<typename Iter, typename RandomGenerator>
 Iter select_randomly(Iter start, Iter end, RandomGenerator& g)
@@ -35,6 +38,38 @@ Iter select_randomly(Iter start, Iter end)
     static std::random_device rd;
     static std::mt19937 gen(rd());
     return select_randomly(start, end, gen);
+}
+
+inline std::vector<std::string> splitByDelimiters(const std::string& input, const std::string& delims)
+{
+    std::vector<std::string> tokens;
+    char c;
+    std::stringstream ss(input);
+    while (ss.get(c))
+    {
+        if (delims.find(c) != std::string::npos)
+        {
+            tokens.emplace_back(1, c);
+        }
+        else
+        {
+            tokens.emplace_back(1, c); // start new string
+            while (ss.get(c))
+            {
+                if (delims.find(c) != std::string::npos)
+                {
+                    tokens.emplace_back(1, c);
+                    break;
+                }
+                else
+                {
+                    tokens.back() += c; // append to existing string
+                }
+            }
+        }
+    }
+
+    return tokens;
 }
 
 #endif // UTIL_HPP

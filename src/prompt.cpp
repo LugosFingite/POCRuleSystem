@@ -39,6 +39,7 @@ void Prompt::run()
 
         if (m_exit.matches(input))
         {
+            std::cout << m_exit.answer(input, m_scriptingEngine) << std::endl;
             break;
         }
 

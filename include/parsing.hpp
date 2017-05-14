@@ -18,14 +18,14 @@
 #ifndef PARSING_HPP
 #define PARSING_HPP
 
-#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <sstream>
 #include <map>
-
 #include <stdexcept>
+
+#include "uglytree.hpp"
 
 #include "util.hpp"
 
@@ -44,19 +44,6 @@ struct parse_error : std::runtime_error
 
 namespace detail
 {
-
-inline std::vector<std::string> parseChoice(const std::string& pattern)
-{
-    std::vector<std::string> choices;
-    std::stringstream ss(pattern);
-    std::string word;
-    while (std::getline(ss, word, '|'))
-    {
-        choices.emplace_back(word);
-    }
-
-    return choices;
-}
 
 inline std::string replaceVariables(const std::string& in, const std::map<std::string, std::string>& variables)
 {
@@ -84,27 +71,99 @@ inline std::string replaceVariables(const std::string& in, const std::map<std::s
     return result;
 }
 
+inline TreeNode<std::string> buildTree(const std::string& pattern)
+{
+    std::vector<std::string> tokens = splitByDelimiters(pattern, "()|");
+    TreeNode<std::string> tree;
+    auto* currentNode = &tree;
+    std::string acc;
+    for (const auto& tok : tokens)
+    {
+        if (tok == "(")
+        {
+            if (tree.getParent() == nullptr || !acc.empty())
+            {
+                currentNode = &currentNode->addChild(acc);
+                acc.clear();
+            }
+        }
+        else if (tok == ")")
+        {
+            if (!acc.empty())
+            {
+                currentNode->addChild(acc);
+                acc.clear();
+            }
+            currentNode = currentNode->getParent();
+        }
+        else if (tok == "|")
+        {
+            if (!acc.empty())
+            {
+                currentNode->addChild(acc);
+                acc.clear();
+            }
+        }
+        else
+        {
+            acc += tok;
+        }
+    }
+    if (!acc.empty())
+    {
+        tree.addChild(acc);
+    }
+    return tree;
 }
+
+inline void collapseTree(TreeNode<std::string>& tree)
+{
+    if (!tree.isLeaf())
+    {
+        if (tree.isParentOfLeafs())
+        {
+            std::vector<std::string> choices;
+            for (size_t i { 0 }; i < tree.getNumChildren(); ++i)
+            {
+                choices.emplace_back(tree.getChild(i).getData());
+            }
+            tree.setData(tree.getData() + *select_randomly(choices.begin(), choices.end()));
+            tree.removeChildren();
+        }
+        else
+        {
+            for (size_t i { 0 }; i < tree.getNumChildren(); ++i)
+            {
+                collapseTree(tree.getChild(i));
+            }
+        }
+    }
+}
+
+}
+
 
 inline std::string parsePattern(const std::string& in, const std::map<std::string, std::string>& variables)
 {
-    std::string result;
+    std::string pattern = detail::replaceVariables(in, variables);
+    auto tree = detail::buildTree(pattern);
 
-    std::stringstream ss(in);
-    std::string word;
-
-    while (std::getline(ss, word, '('))
+    while (!tree.isParentOfLeafs())
     {
-        result += word;
-        if (std::getline(ss, word, ')'))
-        {
-            auto choices = detail::parseChoice(word);
-            result += *select_randomly(choices.begin(), choices.end());
-        }
+        detail::collapseTree(tree);
     }
 
-    return detail::replaceVariables(result, variables);
+    std::string result;
+
+    for (size_t i { 0 }; i < tree.getNumChildren(); ++i)
+    {
+        result += tree.getChild(i).getData();
+    }
+
+    return result;
 }
+
+
 
 }
 
