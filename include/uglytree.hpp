@@ -18,6 +18,12 @@
 #ifndef UGLYTREE_HPP
 #define UGLYTREE_HPP
 
+/// DISCLAIMER : Oui, c'est très moche
+/// Mais je voulais baser l'algo sur un arbre
+/// car flemme de faire un truc poussé et optimisé
+/// et j'ai donc réutilisé une classe Tree moche mais qui marche
+/// que j'avais fait pour france ioi à la base avant de me rendre compte que c'était totalement overkill
+
 #include <iostream>
 #include <cassert>
 #include <vector>

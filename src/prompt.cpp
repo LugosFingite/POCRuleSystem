@@ -24,11 +24,13 @@
 #include "ext/chaiscript/chaiscript_stdlib.hpp"
 
 #include "parsing.hpp"
+#include "database.hpp"
 
 Prompt::Prompt()
     : m_scriptingEngine(chaiscript::Std_Lib::library())
 {
     loadRules();
+    db::registerToScript(m_scriptingEngine);
 }
 
 void Prompt::run()

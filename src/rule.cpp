@@ -39,16 +39,28 @@ std::string Rule::answer(const std::string& input, chaiscript::ChaiScript &scrip
     for (const auto& pair : variables)
     {
         variables[pair.first] = what[pair.first].str();
-        scriptingEngine.add(chaiscript::var(&variables[pair.first]), pair.first);
+        scriptingEngine.add_global(chaiscript::var(&variables[pair.first]), pair.first);
     }
 
     scriptingEngine.add(chaiscript::fun([input]{return input;}), "input");
 
-    scriptingEngine.eval(analyzeScript);
+    std::vector<std::string> temporaryVariables;
+
+    scriptingEngine.add(chaiscript::fun([this, &temporaryVariables](const std::string& id, const std::string& val)
+    {variables[id] = val; temporaryVariables.emplace_back(id);}), "pushVariable");
+
+    scriptingEngine.eval<std::function<void()>>("fun() {" + analyzeScript + "}")();
 
     scriptingEngine.set_state(oldState);
 
-    return parser::parsePattern(returnPattern, variables);
+    std::string result = parser::parsePattern(returnPattern, variables);
+
+    for (const auto& id : temporaryVariables)
+    {
+        variables.erase(id);
+    }
+
+    return result;
 }
 
 std::vector<Rule> rulesFromJson(const nlohmann::json &root)
@@ -58,13 +70,14 @@ std::vector<Rule> rulesFromJson(const nlohmann::json &root)
     {
         Rule rule;
         std::string pattern = json["input"];
-        sregex match = sregex::compile(R"(\$[[:alpha:]]+)");
+        sregex match = sregex::compile(R"(\$[[:alnum:]]+)");
 
-        smatch what;
-        regex_search(pattern, what, match);
+        sregex_token_iterator iter(pattern.begin(), pattern.end(), match, 0);
+        sregex_token_iterator end;
 
-        for (const auto& val : what)
+        for(; iter != end; ++iter )
         {
+            auto val = *iter;
             rule.variables[val.str().substr(1, val.length()-1)] = ""; // enlever le '$' au début
         }
 
