@@ -55,10 +55,10 @@ exemple :
 }
 ```
 
-"rules" : tableau qui contient les structures de règle du fichier (il peut effectivement y en avoir plusieurs !)
+- "rules" : tableau qui contient les structures de règle du fichier (il peut effectivement y en avoir plusieurs !)
 
-"input" : Contient l'entrée, au format d'une [regex](https://fr.wikipedia.org/wiki/Expression_rationnelle) : si la regex correspond à l'entrée qu'on donne, la règle est retenue. Contient aussi des variables sous la forme $truc qui seront reconnues, et pourront donc être utlisées dans la partie script ou la partie réponse.
+- "input" : Contient l'entrée, au format d'une [regex](https://fr.wikipedia.org/wiki/Expression_rationnelle) : si la regex correspond à l'entrée qu'on donne, la règle est retenue. Contient aussi des variables sous la forme $truc qui seront reconnues, et pourront donc être utlisées dans la partie script ou la partie réponse.
 
-"script" (optionnel) : contient le script d'interprétation de l'entrée (dans le langage de script de votre choix, le plus pratique en python ! Voire du python lui même !)
+- "script" (optionnel) : contient le script d'interprétation de l'entrée (dans le langage de script de votre choix, le plus pratique en python ! Voire du python lui même !)
 
-"answer" : schéma de réponse : un string basique, qui contient des schémas de forme `(x|y)` , où une des deux opérandes (ici x ou y) est choisie au hasard, afin d'avoir une réponse en partie aléatoire qui fera moins 'robot'. Contient aussi des variables au format `$nom`, qui seront remplacées par leur valeur réelle dans la réponse.
+- "answer" : schéma de réponse : un string basique, qui contient des schémas de forme `(x|y)` , où une des deux opérandes (ici x ou y) est choisie au hasard, afin d'avoir une réponse en partie aléatoire qui fera moins 'robot'. Contient aussi des variables au format `$nom`, qui seront remplacées par leur valeur réelle dans la réponse.
