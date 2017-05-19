@@ -5,8 +5,8 @@
 *Le proto-projet en C++ est structuré ainsi :*
 
 - La classe "Prompt" :
-	-- Gère les interactions avec l'utilisateur et la gestion de l'IA
-	-- Constructeur --> Initialise les rules et le moteur de script
+	- Gère les interactions avec l'utilisateur et la gestion de l'IA
+	- Constructeur --> Initialise les rules et le moteur de script
 -- run() --> sert à éxecuteur l'IA, contient une boucle qui récupère l'entrée via read(), et s'occupe de la faire matcher à la bonne règle pour l'exécuter
 -- loadRules() --> charge les règles depuis le dossier 'rules()'
 -- loadRuleNtoUnderstood() --> charge la règle à utiliser si l'entrée n'est pas comprise
