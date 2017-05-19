@@ -7,35 +7,35 @@
 - La classe "Prompt" :
 	- Gère les interactions avec l'utilisateur et la gestion de l'IA
 	- Constructeur --> Initialise les rules et le moteur de script
--- run() --> sert à éxecuteur l'IA, contient une boucle qui récupère l'entrée via read(), et s'occupe de la faire matcher à la bonne règle pour l'exécuter
--- loadRules() --> charge les règles depuis le dossier 'rules()'
--- loadRuleNtoUnderstood() --> charge la règle à utiliser si l'entrée n'est pas comprise
--- loadRuleExit() --> charge la règle qui s'occupe de sortir du programme
--- read() --> rècupère l'entrée et la retourne
+	- run() --> sert à éxecuteur l'IA, contient une boucle qui récupère l'entrée via read(), et s'occupe de la faire matcher à la bonne règle pour l'exécuter
+	- loadRules() --> charge les règles depuis le dossier 'rules()'
+	- loadRuleNtoUnderstood() --> charge la règle à utiliser si l'entrée n'est pas comprise
+	- loadRuleExit() --> charge la règle qui s'occupe de sortir du programme
+	- read() --> rècupère l'entrée et la retourne
 
 - le fichier 'database.hpp' et 'database.cpp' : 
--- exists(string) -> vérifie si une clé d'entrée existe dans la db
--- load(string, string) et load(string) -> récupère une valeur de la db, avec une version qui prend en compte une valeur par défaut
--- save(string, string) -> sauve une valeur dans la db
--- registerToScript(chai) -> détail d'implémentation, ajoute les fonctions de db au moteur de script
+	- exists(string) -> vérifie si une clé d'entrée existe dans la db
+	- load(string, string) et load(string) -> récupère une valeur de la db, avec une version qui prend en compte une valeur par défaut
+	- save(string, string) -> sauve une valeur dans la db
+	- registerToScript(chai) -> détail d'implémentation, ajoute les fonctions de db au moteur de script
 
 - le fichier 'parsing.hpp' et 'parsing.cpp'
--- parse_error et tout -> détail d'implémentation, exceptions
--- detail::replaceVariables(string, map) -> remplace les variables dans la règle en '`$nom`' avec les valeurs possédées
--- detail::buildTree() -> détail d'implémentation, construit l'arbre de l'entrée pour gèrer les règles imbriquées (comme '`((yo|plz) | héhé)`')
--- detail::collapseTree(Tree) -> detail d'implémentation, 'effondre' progressivement l'arbre en gèrant les règles imbriquées unes à unes des plus imbriquées vers le haut
--- parsePattern(string, map) -> s'occupe d'interpréter l'entrée de la règle en un string final choisi au hasard selon la structure de la règle (cf. partie règle)
+	- parse_error et tout -> détail d'implémentation, exceptions
+	- detail::replaceVariables(string, map) -> remplace les variables dans la règle en '`$nom`' avec les valeurs possédées
+	- detail::buildTree() -> détail d'implémentation, construit l'arbre de l'entrée pour gèrer les règles imbriquées (comme '`((yo|plz) | héhé)`')
+	- detail::collapseTree(Tree) -> detail d'implémentation, 'effondre' progressivement l'arbre en gèrant les règles imbriquées unes à unes des plus imbriquées vers le haut
+	- parsePattern(string, map) -> s'occupe d'interpréter l'entrée de la règle en un string final choisi au hasard selon la structure de la règle (cf. partie règle)
 
 - Structure Rule
--- Contient la règle et les logiques associées
--- matches(string) -> vérifie si une entrée correspond à la règle
--- answer(string, chai) -> répond à la règle selon une entrée donnée, via regex et compagnie
--- rulesFromJson(json) -> crée un objet Rule selon un fichier json
+	- Contient la règle et les logiques associées
+	- matches(string) -> vérifie si une entrée correspond à la règle
+	- answer(string, chai) -> répond à la règle selon une entrée donnée, via regex et compagnie
+	- rulesFromJson(json) -> crée un objet Rule selon un fichier json
 
 - UglyTree -> détail d'implémentation, implémentation personelle et degeulasse d'un arbre -> faites en un vous même en python, vous calquez pas sur le mien ! Voire faite autrement pour la partie parsing
  
 - util.hpp -> détail d'implémentation
--- contient des fonctions utiles pour le POC, par forcément pertinentes pour le python, à voir
+	- contient des fonctions utiles pour le POC, par forcément pertinentes pour le python, à voir
 
 ### 2) La structure des règles
 
