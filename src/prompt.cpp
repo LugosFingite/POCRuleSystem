@@ -26,6 +26,7 @@
 #include "parsing.hpp"
 #include "database.hpp"
 
+/// initialisation, des règles et du moteur de script
 Prompt::Prompt()
     : m_scriptingEngine(chaiscript::Std_Lib::library())
 {
@@ -33,6 +34,7 @@ Prompt::Prompt()
     db::registerToScript(m_scriptingEngine);
 }
 
+/// pas trop dur à comprendre
 void Prompt::run()
 {
     while (true)
@@ -62,6 +64,7 @@ void Prompt::run()
     }
 }
 
+/// ici, on itère sur chaque fichier contenu dans le dossier 'rules/', et pour chaque fichier json, on l'ouvre et le convertit en Rule
 void Prompt::loadRules()
 {
     tinydir_dir dir;
@@ -91,6 +94,7 @@ void Prompt::loadRules()
     loadRuleExit();
 }
 
+/// idem
 void Prompt::loadRuleNotUnderstood()
 {
     std::ifstream ifstream("rulesSpecial/notUnderstood.json");
@@ -100,6 +104,7 @@ void Prompt::loadRuleNotUnderstood()
     m_notUnderstood = rulesFromJson(json).front();
 }
 
+/// idem
 void Prompt::loadRuleExit()
 {
     std::ifstream ifstream("rulesSpecial/exit.json");
@@ -109,6 +114,7 @@ void Prompt::loadRuleExit()
     m_exit = rulesFromJson(json).front();
 }
 
+/// lit l'entrée et affiche un joli '>'
 std::string Prompt::read()
 {
     std::cout << ">";

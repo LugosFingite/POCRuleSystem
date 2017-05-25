@@ -25,6 +25,7 @@
 
 using namespace boost::xpressive;
 
+/// tout bête, appelle une fonction qui vérifie si la regex correspond à l'entrée
 bool Rule::matches(const std::string &input) const
 {
     return regex_match(input, checkPattern);
@@ -35,13 +36,13 @@ std::string Rule::answer(const std::string& input, chaiscript::ChaiScript &scrip
     auto oldState = scriptingEngine.get_state();
     smatch what;
     regex_match(input, what, checkPattern);
-
+    /// detail, ajoute chaque variable de la règle au moteur de script
     for (const auto& pair : variables)
     {
         variables[pair.first] = what[pair.first].str();
         scriptingEngine.add_global(chaiscript::var(&variables[pair.first]), pair.first);
     }
-
+    /// ect...
     scriptingEngine.add(chaiscript::fun([input]{return input;}), "input");
 
     std::vector<std::string> temporaryVariables;
@@ -49,12 +50,15 @@ std::string Rule::answer(const std::string& input, chaiscript::ChaiScript &scrip
     scriptingEngine.add(chaiscript::fun([this, &temporaryVariables](const std::string& id, const std::string& val)
     {variables[id] = val; temporaryVariables.emplace_back(id);}), "pushVariable");
 
+    /// ordonne au script de la règle de s'exécuter
     scriptingEngine.eval<std::function<void()>>("fun() {" + analyzeScript + "}")();
 
     scriptingEngine.set_state(oldState);
 
+    /// parse 'pour de vrai' la règle pour retourner la réponse
     std::string result = parser::parsePattern(returnPattern, variables);
 
+    /// du cleanup
     for (const auto& id : temporaryVariables)
     {
         variables.erase(id);
@@ -63,6 +67,7 @@ std::string Rule::answer(const std::string& input, chaiscript::ChaiScript &scrip
     return result;
 }
 
+/// convertit un fichier json en une règle
 std::vector<Rule> rulesFromJson(const nlohmann::json &root)
 {
     std::vector<Rule> rules;

@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <memory>
 
+/// du détail, ma classe règle dégeulasse
 template<class T>
 class TreeNode
 {

@@ -24,6 +24,7 @@
 #include <string>
 #include <sstream>
 
+/// choisit au hasard une valeur du conteneur spécifié (du détail, doit exister de base en python)
 template<typename Iter, typename RandomGenerator>
 Iter select_randomly(Iter start, Iter end, RandomGenerator& g)
 {
@@ -32,6 +33,7 @@ Iter select_randomly(Iter start, Iter end, RandomGenerator& g)
     return start;
 }
 
+/// idem
 template<typename Iter>
 Iter select_randomly(Iter start, Iter end)
 {
@@ -40,6 +42,7 @@ Iter select_randomly(Iter start, Iter end)
     return select_randomly(start, end, gen);
 }
 
+// doit exister en python, délimite un string selon des délimiteurs choisis, en les incluant dans le string
 inline std::vector<std::string> splitByDelimiters(const std::string& input, const std::string& delims)
 {
     std::vector<std::string> tokens;
