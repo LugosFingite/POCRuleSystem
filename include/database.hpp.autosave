@@ -1,0 +1,47 @@
+/*  database %{Cpp:License:ClassName} - Yann BOUCHER (yann) 14/05/2017
+**
+**
+**            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+**                    Version 2, December 2004
+**
+** Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+**
+** Everyone is permitted to copy and distribute verbatim or modified
+** copies of this license document, and changing it is allowed as long
+** as the name is changed.
+**
+**            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+**   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+**
+**  0. You just DO WHAT THE FUCK YOU WANT TO.
+*/
+#ifndef DATABASE_HPP
+#define DATABASE_HPP
+
+#include <string>
+
+namespace chaiscript
+{
+class ChaiScript;
+}
+
+namespace db
+{
+
+/// vérifie si un id donné existe dans la DB
+bool exists(const std::string& id);
+
+/// récupère la valeur associée à l'id
+std::string load(const std::string& id); 
+// idem, sauf que si la valeur n'existe pas, on fournit une valeur par défaut
+std::string load(const std::string& id, const std::string& defaultValue);
+
+/// sauvegarde dans la DB la valeur data à l'ID id
+void save(const std::string& id, const std::string& data);
+
+/// detail, permet de fournir les fonctions précédentes au moteur de scripting (sûrement inutile en python, car python est lui même un langage interprété)
+void registerToScript(chaiscript::ChaiScript& chai);
+
+}
+
+#endif // DATABASE_HPP

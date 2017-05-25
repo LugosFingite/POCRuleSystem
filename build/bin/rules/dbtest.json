@@ -1,0 +1,15 @@
+
+{
+	"rules" : [
+{
+	"input" : ".*Que vaut $valeur \\?.*",
+	"script" : "var resultat = load(valeur, \"null\"); pushVariable(\"resultat\", resultat);",
+	"answer" : "$valeur vaut $resultat"
+},
+{
+	"input" : ".*Mettre $id à $valeur",
+	"script" : "save(id, valeur);",
+	"answer" : "$id vaut $valeur"
+}]
+
+}

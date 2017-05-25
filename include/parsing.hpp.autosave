@@ -1,0 +1,185 @@
+/*  parsing %{Cpp:License:ClassName} - Yann BOUCHER (yann) 08/05/2017
+**
+**
+**            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+**                    Version 2, December 2004
+**
+** Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+**
+** Everyone is permitted to copy and distribute verbatim or modified
+** copies of this license document, and changing it is allowed as long
+** as the name is changed.
+**
+**            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+**   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+**
+**  0. You just DO WHAT THE FUCK YOU WANT TO.
+*/
+#ifndef PARSING_HPP
+#define PARSING_HPP
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <map>
+#include <stdexcept>
+
+#include "uglytree.hpp"
+
+#include "util.hpp"
+
+namespace parser
+{
+/// Exception définie en cas d'erreur de parsing
+struct parse_error : std::runtime_error
+{
+        using std::runtime_error::runtime_error;
+};
+
+[[noreturn]] inline void throw_parse_error(const std::string& why)
+{
+    throw parse_error(why);
+}
+
+namespace detail
+{
+
+/// donné un string comme : 'bonjour $nom', remplace les variables précédées d'un $ par leur valeur réelle, fournie dans variables
+inline std::string replaceVariables(const std::string& in, const std::map<std::string, std::string>& variables)
+{
+    std::string result;
+
+    std::stringstream ss(in);
+    std::string word;
+    /// analyse chaque mot donné en entrée, et si commence par un $, remplace
+    while (ss >> word)
+    {
+        if (word.front() == '$') // c'est une variable à remplacer
+        {
+            word = word.substr(1, word.length()-1);
+            if (variables.find(word) == variables.cend())
+            {
+                throw_parse_error("Undefined variable $" + word + " in answer pattern !");
+            }
+            else
+            {
+                word = variables.at(word);
+            }
+        }
+        result += word + " ";
+    }
+
+    return result;
+}
+
+/// construit un arbre à partir d'un string d'entrée, probablement detail car il y a sûrement moyen de mieux faire
+/// par ex, pour '(bob|bill)'
+/// on a:
+///     |
+///    /\
+///   /  \
+///bob   bill
+inline TreeNode<std::string> buildTree(const std::string& pattern)
+{
+    /// converti l'entrée en une liste de strings, délimités par '(',')',ou '|'
+    std::vector<std::string> tokens = splitByDelimiters(pattern, "()|");
+    TreeNode<std::string> tree;
+    auto* currentNode = &tree;
+    std::string acc;
+    /// pour chaque token de la liste
+    for (const auto& tok : tokens)
+    {
+        /// on crée un noeud enfant
+        if (tok == "(")
+        {
+            if (tree.getParent() == nullptr || !acc.empty())
+            {
+                currentNode = &currentNode->addChild(acc);
+                acc.clear();
+            }
+        }
+        /// on ajoute ce qui reste dans acc et on remonte
+        else if (tok == ")")
+        {
+            if (!acc.empty())
+            {
+                currentNode->addChild(acc);
+                acc.clear();
+            }
+            currentNode = currentNode->getParent();
+        }
+        /// on ajoute un noeud enfant contenant acc
+        else if (tok == "|")
+        {
+            if (!acc.empty())
+            {
+                currentNode->addChild(acc);
+                acc.clear();
+            }
+        }
+        else
+        {
+            acc += tok;
+        }
+    }
+    if (!acc.empty())
+    {
+        tree.addChild(acc);
+    }
+    return tree;
+}
+
+/// on 'effondre' l'arbre, càd pour chaque noeud de l'arbre en partant par les noeuds les plus profonds, on change la valeur de ce noeud en prenant au hasard la valeur d'un de ses noeuds enfant (récursion donc)
+inline void collapseTree(TreeNode<std::string>& tree)
+{
+    if (!tree.isLeaf())
+    {
+        if (tree.isParentOfLeafs())
+        {
+            std::vector<std::string> choices;
+            for (size_t i { 0 }; i < tree.getNumChildren(); ++i)
+            {
+                choices.emplace_back(tree.getChild(i).getData());
+            }
+            tree.setData(tree.getData() + *select_randomly(choices.begin(), choices.end()));
+            tree.removeChildren();
+        }
+        else
+        {
+            for (size_t i { 0 }; i < tree.getNumChildren(); ++i)
+            {
+                collapseTree(tree.getChild(i));
+            }
+        }
+    }
+}
+
+}
+
+/// fonction principale qui parse l'entrée, s'occupe de remplacer les $, construire l'arbre, l'effondrer et récupérer le string résultant final.
+inline std::string parsePattern(const std::string& in, const std::map<std::string, std::string>& variables)
+{
+    std::string pattern = detail::replaceVariables(in, variables);
+    auto tree = detail::buildTree(pattern);
+
+    while (!tree.isParentOfLeafs())
+    {
+        detail::collapseTree(tree);
+    }
+
+    std::string result;
+
+    for (size_t i { 0 }; i < tree.getNumChildren(); ++i)
+    {
+        result += tree.getChild(i).getData();
+    }
+
+    return result;
+}
+
+
+
+}
+
+#endif // PARSING_HPP
